@@ -2,7 +2,7 @@
 
 ## Description
 
-2024-07-15: PROJECT START
+2024-07-18: PROJECT START
 
 This project is a learning exercise aimed at creating an efficient and user-friendly system for querying and consuming Recipes data from the TheMealDB API. It allows users to access recipes and adding to favorites.
 
