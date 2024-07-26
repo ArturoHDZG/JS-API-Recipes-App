@@ -67,8 +67,6 @@ function appInit() {
       const recipeBtn = document.createElement('BUTTON');
       recipeBtn.classList.add('btn', 'btn-danger', 'w-100');
       recipeBtn.textContent = 'Ver Receta';
-      // recipeBtn.dataset.bsTarget = '#modal';
-      // recipeBtn.dataset.bsToggle = 'modal';
       recipeBtn.onclick = () => showSelectedRecipe(idMeal);
 
       recipeBody.appendChild(recipeTitle);
@@ -120,7 +118,52 @@ function appInit() {
 
     modalBody.appendChild(listGroup);
 
+    const modalFooter = document.querySelector('.modal-footer');
+    clearHTML(modalFooter);
+
+    const favoritesBtn = document.createElement('BUTTON');
+    favoritesBtn.classList.add('btn', 'btn-danger', 'col');
+    favoritesBtn.textContent = existsFavorite(idMeal) ? 'Eliminar de favoritos' : 'Guardar en favoritos';
+    modalFooter.appendChild(favoritesBtn);
+
+    favoritesBtn.onclick = function () {
+      if (existsFavorite(idMeal)) {
+        deleteFavorites(idMeal);
+        favoritesBtn.textContent = 'Guardar en favoritos';
+        return;
+      }
+
+      addFavorite({
+        id: idMeal,
+        title: strMeal,
+        img: strMealThumb
+      });
+      favoritesBtn.textContent = 'Eliminar de favoritos';
+    };
+
+    const closeBtn = document.createElement('BUTTON');
+    closeBtn.classList.add('btn', 'btn-secondary', 'col');
+    closeBtn.textContent = 'Cerrar';
+    closeBtn.onclick = () => modal.hide();
+    modalFooter.appendChild(closeBtn);
+
     modal.show();
+  }
+
+  function addFavorite(recipe) {
+    const favorite = JSON.parse(localStorage.getItem('favorites')) ?? [];
+    localStorage.setItem('favorites', JSON.stringify([ ...favorite, recipe ]));
+  }
+
+  function deleteFavorites(id) {
+    const favorite = JSON.parse(localStorage.getItem('favorites')) ?? [];
+    const newFavorites = favorite.filter(newFavorite => newFavorite.id !== id);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
+  }
+
+  function existsFavorite(id) {
+    const favorite = JSON.parse(localStorage.getItem('favorites'))?? [];
+    return favorite.some(recipe => recipe.id === id);
   }
 
   function clearHTML(field) {
