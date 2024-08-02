@@ -1,11 +1,17 @@
 function appInit() {
   const selectCategory = document.querySelector('#categorias');
-  selectCategory.addEventListener('change', selectedCategory);
-
   const recipeResults = document.querySelector('#resultado');
+  const favoritesDiv = document.querySelector('.favoritos');
   const modal = new bootstrap.Modal('#modal', {});
 
-  getCategories();
+  if (selectCategory) {
+    selectCategory.addEventListener('change', selectedCategory);
+    getCategories();
+  }
+
+  if (favoritesDiv) {
+    getFavorites();
+  }
 
   function getCategories() {
     const url = 'https://www.themealdb.com/api/json/v1/1/categories.php';
@@ -54,20 +60,20 @@ function appInit() {
 
       const recipeImg = document.createElement('IMG');
       recipeImg.classList.add('card-img-top');
-      recipeImg.alt = `Presentación de la receta de ${strMeal}`;
-      recipeImg.src = strMealThumb;
+      recipeImg.alt = `Presentación de la receta de ${strMeal ?? recipe.img}`;
+      recipeImg.src = strMealThumb ?? recipe.img;
 
       const recipeBody = document.createElement('DIV');
       recipeBody.classList.add('card-body');
 
       const recipeTitle = document.createElement('H3');
       recipeTitle.classList.add('card-title', 'mb-3');
-      recipeTitle.textContent = strMeal;
+      recipeTitle.textContent = strMeal ?? recipe.title;
 
       const recipeBtn = document.createElement('BUTTON');
       recipeBtn.classList.add('btn', 'btn-danger', 'w-100');
       recipeBtn.textContent = 'Ver Receta';
-      recipeBtn.onclick = () => showSelectedRecipe(idMeal);
+      recipeBtn.onclick = () => showSelectedRecipe(idMeal ?? recipe.id);
 
       recipeBody.appendChild(recipeTitle);
       recipeBody.appendChild(recipeBtn);
@@ -130,6 +136,7 @@ function appInit() {
       if (existsFavorite(idMeal)) {
         deleteFavorites(idMeal);
         favoritesBtn.textContent = 'Guardar en favoritos';
+        showToast('Eliminado correctamente');
         return;
       }
 
@@ -139,6 +146,7 @@ function appInit() {
         img: strMealThumb
       });
       favoritesBtn.textContent = 'Eliminar de favoritos';
+      showToast('Agregado correctamente');
     };
 
     const closeBtn = document.createElement('BUTTON');
@@ -164,6 +172,29 @@ function appInit() {
   function existsFavorite(id) {
     const favorite = JSON.parse(localStorage.getItem('favorites'))?? [];
     return favorite.some(recipe => recipe.id === id);
+  }
+
+  function showToast(message) {
+    const toastDiv = document.querySelector('#toast');
+    const toastBody = document.querySelector('.toast-body');
+    const toast = new bootstrap.Toast(toastDiv);
+
+    toastBody.textContent = message;
+    toast.show();
+  }
+
+  function getFavorites() {
+    const favorite = JSON.parse(localStorage.getItem('favorites')) ?? [];
+
+    if (favorite.length) {
+      showRecipes(favorite);
+      return;
+    }
+
+    const noFavorite = document.createElement('P');
+    noFavorite.classList.add('text-center', 'fs-4', 'mt-5', 'font-bold');
+    noFavorite.textContent = 'No se encontraron favoritos';
+    favoritesDiv.appendChild(noFavorite);
   }
 
   function clearHTML(field) {
