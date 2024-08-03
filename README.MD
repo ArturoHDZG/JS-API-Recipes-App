@@ -8,7 +8,7 @@ This project is a learning exercise aimed at creating an efficient and user-frie
 
 ## Features
 
-- **Fetch API**: Utilizes the native JavaScript Fetch API to make HTTP requests to the OpenWeather API.
+- **Fetch API**: Utilizes the native JavaScript Fetch API to make HTTP requests to the TheMealDB API.
 - **Save Recipes**: Provides a LocalStorage session to save favorite recipes into "My favorites" section.
 - **TheMealDB**: Consumes the TheMealDB API to retrieve a lot of recipes.
 
